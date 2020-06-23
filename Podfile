@@ -37,6 +37,8 @@ target 'GithubSearch' do
     inherit! :search_paths
     pod 'Quick'
     pod 'Nimble'
+    pod 'RxTest'
+    pod 'RxBlocking'
   end
   
 end

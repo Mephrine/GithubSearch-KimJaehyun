@@ -19,7 +19,7 @@ extension JSON {
      - Returns: Any?
      - Note: SwiftyJSON 라이브러리에서 JSON 타입을 원하는 타입으로 변경하는데 사용되는 함수
     */
-    func to<T>(type: T?) -> Any? {
+    public func to<T>(type: T?) -> Any? {
         if let baseObj = type as? ALSwiftyJSONAble.Type {
             if self.type == .array {
                 var arrObject: [Any] = []

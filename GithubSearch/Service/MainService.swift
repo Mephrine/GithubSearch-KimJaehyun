@@ -76,10 +76,10 @@ class MainService {
      - Returns: Single<AppVersion>
      - Note: 네트워크 통신을 통해 유저 검색 정보를 받아옴.
     */
-    fileprivate func searchUser(_ searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Single<User> {
-        return networking.request(.searchUser(q: searchText, sort: sort.value, order: order.value, page: page))
-            .map(to: User.self)
-    }
+//    fileprivate func fetchSearchUser(_ searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Single<User> {
+//        return networking.request(.searchUser(q: searchText, sort: sort.value, order: order.value, page: page))
+//            .map(to: User.self)
+//    }
     
     /**
      # searchUser
@@ -89,9 +89,9 @@ class MainService {
      - Returns: Single<AppVersion>
      - Note: 네트워크 통신을 통해 유저 검색 정보를 받아옴.
     */
-    fileprivate func userInfo(userName: String) -> Single<User> {
+    fileprivate func fetchUserInfo(userName: String) -> Single<UserInfo> {
         return networking.request(.getUserInfo(userName: userName))
-            .map(to: User.self)
+            .map(to: UserInfo.self)
     }
     
 }
@@ -107,9 +107,9 @@ extension Reactive where Base: MainService {
      - Returns: Observable<User>
      - Note: 유저 검색 정보를 rx로 접근 가능하도록 확장한 함수.
     */
-    func searchUser(searchText: String, sort: SearchSort, order: SearchOrder, page: Int) -> Observable<User> {
-        return base.searchUser(searchText, sort, order, page).asObservable()
-    }
+//    func searchUser(searchText: String, sort: SearchSort, order: SearchOrder, page: Int) -> Observable<User> {
+//        return base.searchUser(searchText, sort, order, page).asObservable()
+//    }
 }
 
 

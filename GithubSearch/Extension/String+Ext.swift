@@ -37,19 +37,7 @@ extension Substring {
 }
 
 extension StringProtocol where Self: RangeReplaceableCollection {
-    var removingAllWhitespacesAndNewlines: Self {
+    public var removingAllWhitespacesAndNewlines: Self {
         return filter { !$0.isNewline && !$0.isWhitespace }
-    }
-    
-    /**
-     # removeAllWhitespacesAndNewlines
-     - Author: Mephrine
-     - Date: 20.02.07
-     - Parameters:
-     - Returns:
-     - Note: whitespace, enter 제거
-    */
-    mutating func removeAllWhitespacesAndNewlines() {
-        removeAll { $0.isNewline || $0.isWhitespace }
     }
 }
