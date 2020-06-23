@@ -8,14 +8,20 @@
 
 import Quick
 import Nimble
+import RxSwift
+import RxTest
+import RxCocoa
+import RxOptional
 @testable import GithubSearch
 
 class MainVMSpec: QuickSpec {
     override func spec() {
         var service: MainServiceProtocol!
+        var disposeBag: DisposeBag!
         // 모든 example가 실행되기 전에 실행.
         beforeSuite {
             service = MainServiceStub()
+            disposeBag = DisposeBag()
         }
         
         // 모든 example가 실행되고난 후에 실행.
@@ -41,6 +47,25 @@ class MainVMSpec: QuickSpec {
                 } catch let error {
                     print("error### : \(error)")
                     fail("userInfo blocking error")
+                }
+            }
+            
+            it("it List Data") {
+                do {
+                    let userInfo = try service.fetchSearchUser(searchText: "", .match, .desc, 1)
+                        .map { $0.items }
+                        .asObservable()
+                        .filterNil()
+                        .flatMap{
+                            Observable.combineLatest($0.map { item in
+                                service.fetchUserInfo(userName: item.login!).asObservable()
+                            })
+                        }.toBlocking().first()
+                    
+                    expect(userInfo?.first?.name).to(equal("Mephrine"), description: "firstName is Mephrine.")
+                } catch let error {
+                    print("error### : \(error)")
+                    fail("searchUser blocking error")
                 }
             }
         }

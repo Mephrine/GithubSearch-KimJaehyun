@@ -58,6 +58,18 @@ public enum SearchOrder {
 }
 
 /**
+ # (P) MainServiceProtocol
+ - Author: Mephrine
+ - Date: 20.06.22
+ - Note: 메인화면 ViewModel에서 구현 필요
+*/
+protocol MainServiceProtocol {
+    func fetchSearchUser(searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Single<SearchUser>
+    func fetchUserInfo(userName: String) -> Single<UserInfo>
+}
+
+
+/**
  # (C) MainService
  - Author: Mephrine
  - Date: 20.06.22
@@ -65,27 +77,30 @@ public enum SearchOrder {
 */
 class MainService {
     private let networking = MNetworking()
-    // 1번만 실행.
-    private let updateSubject = ReplaySubject<User?>.create(bufferSize: 1)
     
     /**
      # searchUser
      - Author: Mephrine
      - Date: 20.06.22
      - Parameters:
+         - searchText : 텍스트필드에 입력된 텍스트
+         - sort : 정렬 기준
+         - order : 오름차순 / 내림차순
+         - page : 불러올 페이지 수
      - Returns: Single<AppVersion>
      - Note: 네트워크 통신을 통해 유저 검색 정보를 받아옴.
     */
-//    fileprivate func fetchSearchUser(_ searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Single<User> {
-//        return networking.request(.searchUser(q: searchText, sort: sort.value, order: order.value, page: page))
-//            .map(to: User.self)
-//    }
+    fileprivate func fetchSearchUser(searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Single<SearchUser> {
+        return networking.request(.searchUser(q: searchText, sort: sort.value, order: order.value, page: page))
+            .map(to: SearchUser.self)
+    }
     
     /**
      # searchUser
      - Author: Mephrine
      - Date: 20.06.22
      - Parameters:
+        - userName : 검색할 유저명
      - Returns: Single<AppVersion>
      - Note: 네트워크 통신을 통해 유저 검색 정보를 받아옴.
     */
@@ -104,12 +119,29 @@ extension Reactive where Base: MainService {
      - Author: Mephrine
      - Date: 20.06.22
      - Parameters:
+        - searchText : 텍스트필드에 입력된 텍스트
+        - sort : 정렬 기준
+        - order : 오름차순 / 내림차순
+        - page : 불러올 페이지 수
      - Returns: Observable<User>
      - Note: 유저 검색 정보를 rx로 접근 가능하도록 확장한 함수.
     */
-//    func searchUser(searchText: String, sort: SearchSort, order: SearchOrder, page: Int) -> Observable<User> {
-//        return base.searchUser(searchText, sort, order, page).asObservable()
-//    }
+    func searchUser(searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Observable<SearchUser> {
+        return base.fetchSearchUser(searchText: searchText, sort, order, page).asObservable()
+    }
+    
+    /**
+     # searchUser
+     - Author: Mephrine
+     - Date: 20.06.22
+     - Parameters:
+        - userName : 검색할 유저명
+     - Returns: Observable<User>
+     - Note: 유저 검색 정보를 rx로 접근 가능하도록 확장한 함수.
+    */
+    func userInfo(userName: String) -> Observable<UserInfo> {
+        return base.fetchUserInfo(userName: userName).asObservable()
+    }
 }
 
 

@@ -48,7 +48,6 @@
 		035AA2F324A1A0EC001A88C9 /* SearchUserDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2F224A1A0EC001A88C9 /* SearchUserDummy.swift */; };
 		035AA2F524A1A2E7001A88C9 /* MainVMSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2F424A1A2E7001A88C9 /* MainVMSpec.swift */; };
 		035AA2F724A1A50A001A88C9 /* SearchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2F624A1A509001A88C9 /* SearchUser.swift */; };
-		035AA2F924A1AE0D001A88C9 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2F824A1AE0D001A88C9 /* User.swift */; };
 		035AA2FB24A1B242001A88C9 /* UserInfoDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2FA24A1B242001A88C9 /* UserInfoDummy.swift */; };
 		035AA2FD24A1B34E001A88C9 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2FC24A1B34E001A88C9 /* Utils.swift */; };
 		035AA30024A1B6A8001A88C9 /* MainServiceStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2FF24A1B6A8001A88C9 /* MainServiceStub.swift */; };
@@ -112,7 +111,6 @@
 		035AA2F224A1A0EC001A88C9 /* SearchUserDummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserDummy.swift; sourceTree = "<group>"; };
 		035AA2F424A1A2E7001A88C9 /* MainVMSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVMSpec.swift; sourceTree = "<group>"; };
 		035AA2F624A1A509001A88C9 /* SearchUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUser.swift; sourceTree = "<group>"; };
-		035AA2F824A1AE0D001A88C9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		035AA2FA24A1B242001A88C9 /* UserInfoDummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoDummy.swift; sourceTree = "<group>"; };
 		035AA2FC24A1B34E001A88C9 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		035AA2FF24A1B6A8001A88C9 /* MainServiceStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainServiceStub.swift; sourceTree = "<group>"; };
@@ -343,7 +341,6 @@
 		035AA2E124A076DE001A88C9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				035AA2F824A1AE0D001A88C9 /* User.swift */,
 				035AA2F624A1A509001A88C9 /* SearchUser.swift */,
 				035AA2E224A076EB001A88C9 /* UserInfo.swift */,
 			);
@@ -615,7 +612,6 @@
 				035AA2D424A07510001A88C9 /* Observable+Response.swift in Sources */,
 				035AA2BF24A06EB0001A88C9 /* StringDefinition.swift in Sources */,
 				035AA2C624A06FC7001A88C9 /* UIColor+Ext.swift in Sources */,
-				035AA2F924A1AE0D001A88C9 /* User.swift in Sources */,
 				035AA29A24A06BF4001A88C9 /* SceneDelegate.swift in Sources */,
 				035AA2D524A07510001A88C9 /* MoyaProvider+Rx.swift in Sources */,
 				035AA2A624A06D99001A88C9 /* Utils.swift in Sources */,
@@ -841,6 +837,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GithubSearch.app/GithubSearch";
+				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
 			name = Debug;
 		};
@@ -864,6 +861,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GithubSearch.app/GithubSearch";
+				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
 			name = Release;
 		};
