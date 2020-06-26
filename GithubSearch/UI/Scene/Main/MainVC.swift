@@ -26,7 +26,7 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
     private var dataSource: MainDataSource {
         return .init(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
             let cell: UserCell = tableView.dequeueReusableCell(for: indexPath)
-            cell.configure(item: UserCellModel(model: item))
+            cell.configure(item: item)
             
             return cell
         })

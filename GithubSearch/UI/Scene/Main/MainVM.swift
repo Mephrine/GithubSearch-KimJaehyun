@@ -102,7 +102,7 @@ final class MainVM: BaseVM, Reactor {
             
             let requestList = services.mainService.rx
                 .searchUser(searchText: userName, .match, .desc, 1)
-                .share(replay: 1, scope: .whileConnected)
+                .share(replay: 1, scope: .forever)
             
             let pageCntObservable = requestList.map { $0.totalCount }
                 .filterNil()
@@ -112,15 +112,16 @@ final class MainVM: BaseVM, Reactor {
                 .map { $0.items }
                 .asObservable()
                 .filterNil()
-                .observeOn(Schedulers.default)
-                .flatMap{
-                    Observable.combineLatest($0.map { [unowned self] item in
-                        self.services.mainService.rx
-                            .userInfo(userName: item.login!)
-                            .asObservable()
-                    })
-            }
+//                .observeOn(Schedulers.default)
+//                .flatMap{
+//                    Observable.combineLatest($0.map { [unowned self] item in
+//                        self.services.mainService.rx
+//                            .userInfo(userName: item.login!)
+//                            .asObservable()
+//                    })
+//            }
             .catchErrorJustReturn([])
+            .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)} }
             .map{ [MainTableViewSection(items: $0)] }
             .map{ Mutation.searchUser(userList: $0) }
             
@@ -132,14 +133,16 @@ final class MainVM: BaseVM, Reactor {
                 .asObservable()
                 .filterNil()
                 .observeOn(Schedulers.default)
-                .flatMap{
-                    Observable.combineLatest($0.map { [unowned self] item in
-                        self.services.mainService.rx
-                            .userInfo(userName: item.login!)
-                            .asObservable()
-                    })
-            }
+//                .flatMap{
+//                    Observable.combineLatest($0.map { [unowned self] item in
+//                        self.services.mainService.rx
+//                            .userInfo(userName: item.login!)
+//                            .asObservable()
+//                    })
+//            }
             .catchErrorJustReturn([])
+                .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)}
+            }
             .map{ [MainTableViewSection(items: $0)] }
             .map{ Mutation.addUserList(userList: $0) }
         }
@@ -161,7 +164,7 @@ final class MainVM: BaseVM, Reactor {
         case .searchUser(let userList):
             newState.page = 2
             newState.userList = userList
-            if userList.isEmpty {
+            if userList.isEmpty || (userList.first?.items.isEmpty ?? true) {
                 newState.noDataText = STR_SEARCH_NO_DATA
             } else {
                 newState.noDataText = ""

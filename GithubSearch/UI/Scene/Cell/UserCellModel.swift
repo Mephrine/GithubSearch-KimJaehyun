@@ -7,9 +7,11 @@
 //
 
 import Foundation
+import RxSwift
 
-struct UserCellModel {
-    let model: UserInfo
+class UserCellModel {
+    let model: SearchUserItem
+    let disposeBag = DisposeBag()
     
     var imageURL: URL? {
         guard let strURL = model.avatarUrl else { return nil }
@@ -19,12 +21,18 @@ struct UserCellModel {
     var userLoginID: String {
         return self.model.login ?? ""
     }
+
+    var publicRepo = BehaviorSubject<String>(value: "")
     
-    var publicRepo: String {
-        return "Number of repos: \(self.model.publicRepos ?? 0)"
-    }
-    
-    init(model: UserInfo) {
+    init(model: SearchUserItem, service: AppServices) {
         self.model = model
+        if let login = model.login {
+            service.mainService.rx.userInfo(userName: login)
+                .observeOn(Schedulers.default)
+                .subscribe(onNext: { [weak self] item in
+                    self?.publicRepo.onNext("Number of repos: \(item.publicRepos ?? 0)")
+                })
+            .disposed(by: disposeBag)
+        }
     }
 }

@@ -22,6 +22,13 @@ PODS:
     - Reusable/View (= 4.1.1)
   - Reusable/Storyboard (4.1.1)
   - Reusable/View (4.1.1)
+  - RxAnimated (0.7.0):
+    - RxAnimated/Core (= 0.7.0)
+    - RxCocoa (~> 5.1)
+    - RxSwift (~> 5.1)
+  - RxAnimated/Core (0.7.0):
+    - RxCocoa (~> 5.1)
+    - RxSwift (~> 5.1)
   - RxBlocking (5.1.1):
     - RxSwift (~> 5)
   - RxCocoa (5.1.1):
@@ -68,6 +75,7 @@ DEPENDENCIES:
   - ReactorKit
   - Result (~> 5.0)
   - Reusable
+  - RxAnimated
   - RxBlocking
   - RxCocoa
   - RxDataSources
@@ -94,6 +102,7 @@ SPEC REPOS:
     - ReactorKit
     - Result
     - Reusable
+    - RxAnimated
     - RxBlocking
     - RxCocoa
     - RxDataSources
@@ -121,6 +130,7 @@ SPEC CHECKSUMS:
   ReactorKit: 12a93358c554bb3f167b16b14c40374fa9cd5acd
   Result: ed341d2f236af425b803e690e9bd8fd0a0cb7c5a
   Reusable: 53a9acf5c536f229b31b5865782414b508252ddb
+  RxAnimated: 8540892468e906e7404595bc51ed4b36b3737ab5
   RxBlocking: 5f700a78cad61ce253ebd37c9a39b5ccc76477b4
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
@@ -137,6 +147,6 @@ SPEC CHECKSUMS:
   Then: 90cd104fd951cec1980a03f57704ad8f784d4d79
   WeakMapTable: d0327eda092be6a8f7c532942ae98dc7948f5d32
 
-PODFILE CHECKSUM: a6e660022e996b66179b8f675312087e80dc234a
+PODFILE CHECKSUM: a5c78c8fcb5c9fe64a448d6d6d5a602559f2bf09
 
 COCOAPODS: 1.8.4

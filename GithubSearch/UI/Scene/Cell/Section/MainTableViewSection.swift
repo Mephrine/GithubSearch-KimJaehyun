@@ -20,7 +20,7 @@ struct MainTableViewSection {
 }
 
 extension MainTableViewSection: SectionModelType {
-    public typealias Item = UserInfo
+    public typealias Item = UserCellModel
     
     init(original: MainTableViewSection, items: [Item]) {
         self = original

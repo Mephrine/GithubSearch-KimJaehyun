@@ -35,10 +35,12 @@ struct SearchUser: ALSwiftyJSONAble {
 */
 struct SearchUserItem: ALSwiftyJSONAble {
     let login: String?      // 유저명
+    let avatarUrl: String?  // 유저 아바타 이미지 URL
     let type: String?       // Organization / User
     
     init?(jsonData: JSON) {
         self.login = jsonData["login"].string
+        self.avatarUrl = jsonData["avatar_url"].string
         self.type = jsonData["type"].string
     }
 }

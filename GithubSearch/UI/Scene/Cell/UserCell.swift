@@ -9,11 +9,14 @@
 import Kingfisher
 import Reusable
 import UIKit
+import RxSwift
+import RxAnimated
 
 final class UserCell: UITableViewCell, NibReusable {
     @IBOutlet weak var ivAvatar: UIImageView!
     @IBOutlet weak var lbName: UILabel!
     @IBOutlet weak var lbRepoNum: UILabel!
+    var disposeBag = DisposeBag()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,8 +29,14 @@ final class UserCell: UITableViewCell, NibReusable {
     }
     
     func configure(item: UserCellModel) {
-        self.ivAvatar.kf.setImage(with: item.imageURL)
+        self.ivAvatar.kf.setImage(with: item.imageURL,
+                                  options: [.transition(.fade(ANIMATION_DURATION))])
         self.lbName.text = item.userLoginID
-        self.lbRepoNum.text = item.publicRepo
+        
+        item.publicRepo
+            .distinctUntilChanged()
+            .observeOn(Schedulers.main)
+            .bind(to: self.lbRepoNum.rx.animated.fade(duration: ANIMATION_DURATION).text)
+        .disposed(by: disposeBag)
     }
 }

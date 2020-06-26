@@ -12,6 +12,7 @@ target 'GithubSearch' do
   pod  "RxSwiftExt"
   pod  "RxOptional"
   pod  "RxViewController"
+  pod  "RxAnimated"
   
   #UI
   pod  "SnapKit"
