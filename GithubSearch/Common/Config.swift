@@ -11,3 +11,6 @@
 public let API_DOMAIN               = "https://api.github.com"
 
 public let PAGE_COUNT               = 20
+
+
+public let GIT_API_ACCESS_TOKEN     = "07bfba7ddcb74b58337558cc437d71f6bbc65169"

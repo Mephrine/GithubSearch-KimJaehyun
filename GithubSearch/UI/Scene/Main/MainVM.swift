@@ -9,7 +9,6 @@
 import Foundation
 import ReactorKit
 
-
 enum APIError: Error {
     case errorURL
     case noData
@@ -39,6 +38,9 @@ final class MainVM: BaseVM, Reactor {
     typealias Services = HasMainService
     var services: Services
     
+    // e.g.
+    var isLoading = BehaviorSubject<Bool>(value: false)
+    
     init(withService service: AppServices) {
         self.services = service
     }
@@ -51,7 +53,7 @@ final class MainVM: BaseVM, Reactor {
      */
     enum Action {
         case inputUserName(userName: String)        // 텍스트 입력
-        case pullRefreshControl                     // 20개 더 불러오기
+        case loadMore                               // 20개 더 불러오기
     }
     
     /**
@@ -61,8 +63,10 @@ final class MainVM: BaseVM, Reactor {
      - Note: ReactorKit에서 Action이 들어오면 비즈니스 로직 처리 후 변경 값을 리턴하는 로직을 담당하는 Mutation함수에서 처리할 enum 모음
      */
     enum Mutation {
-        case searchUser(userList: [UserInfo]?)
-        case addPageList(userList: [UserInfo]?)
+        case searchUser(userList: [MainTableViewSection])
+        case searchText(text: String)
+        case getTotalPage(totalPage: Int)
+        case addUserList(userList: [MainTableViewSection])
     }
     
     /**
@@ -73,8 +77,10 @@ final class MainVM: BaseVM, Reactor {
      */
     struct State {
         var page: Int = 1
-        var userList: [UserInfo]? // 유저 이름만 뽑아낸 리스트
-        var searchUserName: String?
+        var totalPage: Int = 20
+        var userList: [MainTableViewSection] = [] // 유저 이름만 뽑아낸 리스트
+        var searchUserName: String = ""
+        var noDataText: String = ""
     }
     
     /**
@@ -89,10 +95,24 @@ final class MainVM: BaseVM, Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .inputUserName(let userName):
-            return services.mainService.rx.searchUser(searchText: userName, .match, .desc, 1)
+            let nameObservable = Observable.of(Mutation.searchText(text: userName))
+            if userName.isEmpty {
+                return nameObservable
+            }
+            
+            let requestList = services.mainService.rx
+                .searchUser(searchText: userName, .match, .desc, 1)
+                .share(replay: 1, scope: .whileConnected)
+            
+            let pageCntObservable = requestList.map { $0.totalCount }
+                .filterNil()
+                .map { Mutation.getTotalPage(totalPage: $0) }
+                
+            let requestObservable = requestList
                 .map { $0.items }
                 .asObservable()
                 .filterNil()
+                .observeOn(Schedulers.default)
                 .flatMap{
                     Observable.combineLatest($0.map { [unowned self] item in
                         self.services.mainService.rx
@@ -101,12 +121,17 @@ final class MainVM: BaseVM, Reactor {
                     })
             }
             .catchErrorJustReturn([])
+            .map{ [MainTableViewSection(items: $0)] }
             .map{ Mutation.searchUser(userList: $0) }
-        case .pullRefreshControl:
-            return services.mainService.rx.searchUser(searchText: currentState.searchUserName ?? "", .match, .desc, currentState.page)
+            
+            return .concat(nameObservable, requestObservable, pageCntObservable)
+        case .loadMore:
+            self.isLoading.onNext(true)
+            return services.mainService.rx.searchUser(searchText: currentState.searchUserName , .match, .desc, currentState.page)
                 .map { $0.items }
                 .asObservable()
                 .filterNil()
+                .observeOn(Schedulers.default)
                 .flatMap{
                     Observable.combineLatest($0.map { [unowned self] item in
                         self.services.mainService.rx
@@ -115,7 +140,8 @@ final class MainVM: BaseVM, Reactor {
                     })
             }
             .catchErrorJustReturn([])
-            .map{ Mutation.searchUser(userList: $0) }
+            .map{ [MainTableViewSection(items: $0)] }
+            .map{ Mutation.addUserList(userList: $0) }
         }
         
     }
@@ -135,13 +161,35 @@ final class MainVM: BaseVM, Reactor {
         case .searchUser(let userList):
             newState.page = 2
             newState.userList = userList
-            break
-        case .addPageList(let userList):
-            newState.page += 1
-            if let addUserList = userList {
-                newState.userList?.append(contentsOf: addUserList)
+            if userList.isEmpty {
+                newState.noDataText = STR_SEARCH_NO_DATA
+            } else {
+                newState.noDataText = ""
             }
+            break
+        case .searchText(let text):
+            newState.searchUserName = text
+            if text.isEmpty {
+                newState.noDataText = STR_SEARCH_NO_INPUT
+            } else {
+                newState.noDataText = ""
+            }
+            break
+        case .addUserList(let userList):
+            newState.page += 1
+            newState.userList.append(contentsOf: userList)
+            self.isLoading.onNext(false)
+        case .getTotalPage(let totalPage):
+            newState.totalPage = totalPage
         }
         return newState
+    }
+    
+    //MARK: -e.g.
+    func chkEnablePaging() -> Bool {
+        if currentState.page >= currentState.totalPage {
+            return false
+        }
+        return true
     }
 }

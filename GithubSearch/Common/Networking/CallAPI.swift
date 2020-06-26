@@ -68,7 +68,7 @@ extension CallAPI: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         switch self {
         default :
-            return nil
+            return ["Authorization": GIT_API_ACCESS_TOKEN]
         }
     }
     
@@ -91,7 +91,7 @@ extension CallAPI: TargetType, AccessTokenAuthorizable {
          */
         switch self {
         default:
-            return .none
+            return .bearer
         }
     }
     
@@ -132,35 +132,6 @@ extension CallAPI: TargetType, AccessTokenAuthorizable {
         } else {
             return Data()
         }
-    }
-    
-}
-
-/*
-jsonArray로 보낼때는 하단과 같이 작업.
-parameters =  ["jsonArray":["contsMetaDivCd": contsMetaDivCd, "contsMetaId": snsKey, "snsKey": snsTypeCd, "snsTypeCd": replSbst, "replSbst": contsMetaId, "langCd": Defaults[.USER_INTERFACE_LANGCD] ?? ""]]
-
-*/
-// JsonArray로 보낼 경우 사용.
-struct JsonArrayEncoding: Moya.ParameterEncoding {
-    public static var `default`: JsonArrayEncoding { return JsonArrayEncoding() }
-    
-    /*
-      # encode
-        - Author: Mephrine.
-        - Date: 20.03.17
-        - parameters:
-         - urlRequest : 전달할 URL
-         - with : 파라미터
-        - returns: URLRequest
-        - Note: JsonArray으로 파라미터를 인코딩해서 전달할 경우에 사용.
-    */
-    public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var req = try urlRequest.asURLRequest()
-        let json = try JSONSerialization.data(withJSONObject: parameters!["jsonArray"]!, options: JSONSerialization.WritingOptions.prettyPrinted)
-        req.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        req.httpBody = json
-        return req
     }
     
 }

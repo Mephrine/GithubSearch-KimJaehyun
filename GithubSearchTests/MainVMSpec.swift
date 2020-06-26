@@ -61,7 +61,6 @@ class MainVMSpec: QuickSpec {
                                 service.fetchUserInfo(userName: item.login!).asObservable()
                             })
                         }.toBlocking().first()
-                    
                     expect(userInfo?.first?.name).to(equal("Mephrine"), description: "firstName is Mephrine.")
                 } catch let error {
                     print("error### : \(error)")

@@ -16,12 +16,12 @@ import SwiftyJSON
  - Note: 검색된 유저 리스트 모델
 */
 struct SearchUser: ALSwiftyJSONAble {
-    let totalCount: String?
+    let totalCount: Int?
     let incompleteResults: Bool?
     let items: [SearchUserItem]?
     
     init?(jsonData: JSON) {
-        self.totalCount = jsonData["total_count"].string
+        self.totalCount = jsonData["total_count"].int
         self.incompleteResults = jsonData["incomplete_results"].bool ?? true
         self.items = jsonData["items"].to(type: SearchUserItem.self) as? [SearchUserItem]
     }

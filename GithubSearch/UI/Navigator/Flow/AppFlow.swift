@@ -26,7 +26,7 @@ class AppFlow: Flow {
     
     private lazy var rootViewController: UINavigationController = {
         let viewController = UINavigationController()
-        viewController.setNavigationBarHidden(true, animated: false)
+        viewController.setNavigationBarHidden(false, animated: false)
         return viewController
     }()
     
@@ -55,6 +55,7 @@ class AppFlow: Flow {
     private func naviToMain() -> FlowContributors {
         let viewModel = MainVM(withService: service)
         let mainVC = MainVC.instantiate(withViewModel: viewModel, storyBoardName: "Main")
+        mainVC.navigationItem.title = STR_NAVIGATION_TITLE
         self.rootViewController.setViewControllers([mainVC], animated: false)
         
         return .one(flowContributor: FlowContributor.contribute(withNextPresentable: mainVC, withNextStepper: viewModel))

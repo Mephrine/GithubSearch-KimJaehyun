@@ -16,13 +16,13 @@ import SwiftyJSON
  - Note: 검색된 개인 유저 모델
 */
 struct UserInfo: ALSwiftyJSONAble {
-    let name: String?  // 유저 이름
+    let login: String?  // 유저 이름
     let avatarUrl: String?  // 유저 아바타 이미지 URL
     let publicRepos: Int?   // Public Repository Number
     
     init?(jsonData: JSON) {
-        self.name = jsonData["name"].string
-        self.avatarUrl = jsonData["avatarUrl"].string
+        self.login = jsonData["login"].string
+        self.avatarUrl = jsonData["avatar_url"].string
         self.publicRepos = jsonData["public_repos"].int
     }
 }

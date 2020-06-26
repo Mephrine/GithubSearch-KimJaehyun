@@ -110,6 +110,35 @@ class BaseVC: UIViewController {
         }
     }
     
+    
+    // MARK: SafeArea
+    /**
+     # safeAreaTopAnchor
+     - Author: Mephrine
+     - Date: 20.06.24
+     - Parameters:
+     - Returns: CGFloat
+     - Note: 현재 디바이스의 safeAreaTop pixel값을 리턴하는 함수
+    */
+    var safeAreaTopAnchor: CGFloat {
+        if #available(iOS 11.0, *) {
+            let window = UIApplication.shared.keyWindow
+            var topPadding = window?.safeAreaInsets.top
+            
+            if topPadding == 0 {
+                topPadding = self.topLayoutGuide.length
+                if topPadding == 0 {
+                    topPadding = UIApplication.shared.statusBarFrame.size.height
+                }
+            }
+            
+            return topPadding ?? Utils.STATUS_HEIGHT
+        } else {
+            return Utils.STATUS_HEIGHT
+        }
+    }
+    
+    
     /**
      # safeAreaBottomAnchor
      - Author: Mephrine
