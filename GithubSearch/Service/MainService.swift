@@ -91,6 +91,8 @@ class MainService {
      - Note: 네트워크 통신을 통해 유저 검색 정보를 받아옴.
     */
     fileprivate func fetchSearchUser(searchText: String, _ sort: SearchSort, _ order: SearchOrder, _ page: Int) -> Single<SearchUser> {
+        // 기존에 검색하던 조건 캔슬하고 새로운 텍스트로 다시 검색하기
+        networking.session.cancelAllRequests()
         return networking.request(.searchUser(q: searchText, sort: sort.value, order: order.value, page: page))
             .map(to: SearchUser.self)
     }

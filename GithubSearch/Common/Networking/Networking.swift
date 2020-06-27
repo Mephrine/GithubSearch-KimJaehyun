@@ -36,10 +36,12 @@ final class Networking<Target: TargetType>: CustomProvider<Target> {
             .filterSuccessfulStatusCodes()
             .do(
                 onSuccess: { value in
+                    if !SHOWING_DEBUG_RECEIVE_API_LOG { return }
                     let message = "SUCCESS: \(requestString) (\(value.statusCode))"
                     log.d(message)
             },
                 onError: { error in
+                    if !SHOWING_DEBUG_RECEIVE_API_LOG { return }
                     if let response = (error as? MoyaError)?.response {
                         if let jsonObject = try? response.mapJSON(failsOnEmptyData: false) {
                             let message = "FAILURE: \(requestString) (\(response.statusCode))\n\(jsonObject)"
@@ -58,6 +60,7 @@ final class Networking<Target: TargetType>: CustomProvider<Target> {
             }
                 ,
                 onSubscribed: {
+                    if !SHOWING_DEBUG_REQUEST_API_LOG { return }
                     let message = "REQUEST: \(requestString)"
                     log.d(message)
             }

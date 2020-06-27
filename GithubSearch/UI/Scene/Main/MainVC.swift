@@ -47,7 +47,7 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
         $0.register(cellType: UserCell.self)
         $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.rowHeight = 90
-//        $0.estimatedRowHeight = 100
+        //        $0.estimatedRowHeight = 100
         $0.separatorStyle = .none
         $0.backgroundColor = .clear
         $0.keyboardDismissMode = .onDrag
@@ -108,24 +108,34 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
             .bind(to: self.tvUserList.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
         
+        reactor.isSearchReload
+            .filter{ $0 == true }
+            .filter{ _ in !reactor.isEmptyUserList() }
+            .observeOn(Schedulers.main)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.tvUserList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            }).disposed(by: disposeBag)
+        
         reactor.isLoading
             .distinctUntilChanged()
             .observeOn(Schedulers.main)
             .subscribe(onNext:{ [weak self] in
                 guard let self = self else { return }
                 if $0 {
+                    self.vLoading.isHidden = false
                     self.vLoading.startAnimating()
                     self.tvUserList.tableFooterView = self.vLoading
                 } else {
                     self.vLoading.stopAnimating()
                     self.tvUserList.tableFooterView = nil
+                    self.vLoading.isHidden = true
                 }
             }).disposed(by: disposeBag)
         
-        // others
-        // 불러오기 기능 적용 필요
+        // e.g.
         self.tvUserList.rx.willDisplayCell
-//            .observeOn(Schedulers.main)
+            .filter{ _ in reactor.chkEnablePaging() }
             .subscribe(onNext: { [weak self] cell, indexPath in
                 guard let self = self else { return }
                 let lastSectionIndex = self.tvUserList.numberOfSections - 1
@@ -134,20 +144,6 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
                     self.reactor?.action.onNext(.loadMore)
                 }
             }).disposed(by: disposeBag)
-        
-//        self.tvUserList.rx.didScroll
-//            .asDriver()
-//            .drive(onNext: { [weak self ] in
-//                guard let self = self else { return }
-//                if self.tvUserList.contentOffset.y <= self.searchOffset {
-//                        if self.tvUserList.contentOffset.y >= 0 {
-//                           self.tvUserList.contentInset = UIEdgeInsets(top: -self.tvUserList.contentOffset.y, left: 0, bottom: 0, right: 0)
-//                           }
-//                       } else if (self.tvUserList.contentOffset.y >= self.searchOffset){
-//                           self.tvUserList.contentInset = UIEdgeInsets(top: -self.searchOffset, left: 0, bottom: 0, right: 0)
-//                       }
-//
-//            }).disposed(by: disposeBag)
     }
     
     //MARK: - UI

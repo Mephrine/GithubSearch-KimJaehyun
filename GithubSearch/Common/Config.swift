@@ -18,3 +18,7 @@ public let PAGE_COUNT               = 20
 
 // MARK: - DURATION
 public let ANIMATION_DURATION       = 0.3
+
+// MARK: - State
+public let SHOWING_DEBUG_REQUEST_API_LOG    = false
+public let SHOWING_DEBUG_RECEIVE_API_LOG    = false

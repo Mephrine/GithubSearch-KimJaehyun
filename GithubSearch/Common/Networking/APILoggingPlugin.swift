@@ -29,6 +29,7 @@ final class APILoggingPlugin: PluginType {
      - Note: API를 보내기 직전에 호출 - URL, header, path등
      */
     func willSend(_ request: RequestType, target: TargetType) {
+        if !SHOWING_DEBUG_REQUEST_API_LOG { return }
         let headers = request.request?.allHTTPHeaderFields ?? [:]
         let urlStr = request.request?.url?.absoluteString ?? "nil"
         let path = urlStr.replacingOccurrences(of: "\(API_DOMAIN)", with: "")
@@ -70,6 +71,7 @@ final class APILoggingPlugin: PluginType {
      - Note: API를 통해 받은 데이터 처리
      */
     func didReceive(_ result: Result<Moya.Response, MoyaError>, target: TargetType) {
+        if !SHOWING_DEBUG_RECEIVE_API_LOG { return }
         let response = result.value
         let error = result.error
         let request = response?.request

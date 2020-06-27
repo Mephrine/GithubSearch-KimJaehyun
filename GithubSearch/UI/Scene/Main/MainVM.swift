@@ -40,6 +40,7 @@ final class MainVM: BaseVM, Reactor {
     
     // e.g.
     var isLoading = BehaviorSubject<Bool>(value: false)
+    var isSearchReload = BehaviorSubject<Bool>(value: false)
     
     init(withService service: AppServices) {
         self.services = service
@@ -129,22 +130,22 @@ final class MainVM: BaseVM, Reactor {
         case .loadMore:
             self.isLoading.onNext(true)
             return services.mainService.rx.searchUser(searchText: currentState.searchUserName , .match, .desc, currentState.page)
-                .map { $0.items }
-                .asObservable()
-                .filterNil()
-                .observeOn(Schedulers.default)
-//                .flatMap{
-//                    Observable.combineLatest($0.map { [unowned self] item in
-//                        self.services.mainService.rx
-//                            .userInfo(userName: item.login!)
-//                            .asObservable()
-//                    })
-//            }
-            .catchErrorJustReturn([])
-                .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)}
-            }
-            .map{ [MainTableViewSection(items: $0)] }
-            .map{ Mutation.addUserList(userList: $0) }
+                            .map { $0.items }
+                            .asObservable()
+                            .filterNil()
+                            .observeOn(Schedulers.default)
+            //                .flatMap{
+            //                    Observable.combineLatest($0.map { [unowned self] item in
+            //                        self.services.mainService.rx
+            //                            .userInfo(userName: item.login!)
+            //                            .asObservable()
+            //                    })
+            //            }
+                        .catchErrorJustReturn([])
+                            .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)}
+                        }
+                        .map{ [MainTableViewSection(items: $0)] }
+                        .map{ Mutation.addUserList(userList: $0) }
         }
         
     }
@@ -164,11 +165,12 @@ final class MainVM: BaseVM, Reactor {
         case .searchUser(let userList):
             newState.page = 2
             newState.userList = userList
-            if userList.isEmpty || (userList.first?.items.isEmpty ?? true) {
+            if isEmptyUserList() {
                 newState.noDataText = STR_SEARCH_NO_DATA
             } else {
                 newState.noDataText = ""
             }
+            self.isSearchReload.onNext(true)
             break
         case .searchText(let text):
             newState.searchUserName = text
@@ -179,9 +181,9 @@ final class MainVM: BaseVM, Reactor {
             }
             break
         case .addUserList(let userList):
+            self.isLoading.onNext(false)
             newState.page += 1
             newState.userList.append(contentsOf: userList)
-            self.isLoading.onNext(false)
         case .getTotalPage(let totalPage):
             newState.totalPage = totalPage
         }
@@ -190,9 +192,16 @@ final class MainVM: BaseVM, Reactor {
     
     //MARK: -e.g.
     func chkEnablePaging() -> Bool {
-        if currentState.page >= currentState.totalPage {
-            return false
+        if (currentState.page - 1) * PAGE_COUNT < currentState.totalPage {
+            return true
         }
-        return true
+        return false
+    }
+    
+    func isEmptyUserList() -> Bool {
+        if currentState.userList.isEmpty || (currentState.userList.first?.items.isEmpty ?? true) {
+            return true
+        }
+        return false
     }
 }
