@@ -28,7 +28,7 @@ class UserCellModel {
         return self.model.login ?? ""
     }
 
-    var publicRepo = BehaviorSubject<String>(value: "")
+    var publicRepo = BehaviorSubject<String>(value: "Number of repos: 0")
     
     init(model: SearchUserItem, service: AppServices) {
         self.model = model
