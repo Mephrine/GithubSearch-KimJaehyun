@@ -68,7 +68,7 @@ extension CallAPI: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         switch self {
         default :
-            return ["Authorization": GIT_API_ACCESS_TOKEN]
+            return ["Authorization": GIT_API_ACCESS_TOKEN.replacingOccurrences(of: "^^", with: "")]
         }
     }
     
