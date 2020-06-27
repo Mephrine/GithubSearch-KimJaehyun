@@ -11,7 +11,7 @@
 public let API_DOMAIN               = "https://api.github.com"
 
 // MARK: - KEY
-public let GIT_API_ACCESS_TOKEN     = "token ec3b2e15f908bfa9884c35680f8f5e4c44152b32"
+public let GIT_API_ACCESS_TOKEN     = "token 7465e2ce9278e442fd591fd910bd29033fefd674"
 
 // MARK: - MAX
 public let PAGE_COUNT               = 20
