@@ -11,6 +11,7 @@ import Reusable
 import RxOptional
 import RxSwift
 import RxDataSources
+import RxAnimated
 import SnapKit
 import Then
 import UIKit
@@ -22,6 +23,8 @@ import UIKit
  - Note: 메인화면 ViewController
  */
 final class MainVC: BaseVC, StoryboardView, StoryboardBased {
+    //MARK : - Variable
+    // TableView DataSource
     typealias MainDataSource = RxTableViewSectionedReloadDataSource<MainTableViewSection>
     private var dataSource: MainDataSource {
         return .init(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
@@ -32,6 +35,7 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
         })
     }
     
+    //MARK: - View
     private lazy var searchBar = UISearchBar(frame: .zero).then {
         $0.placeholder = STR_SEARCH_PLACE_HOLDER
         $0.searchBarStyle = .prominent
@@ -47,7 +51,6 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
         $0.register(cellType: UserCell.self)
         $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.rowHeight = 90
-        //        $0.estimatedRowHeight = 100
         $0.separatorStyle = .none
         $0.backgroundColor = .clear
         $0.keyboardDismissMode = .onDrag
@@ -77,6 +80,10 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Async.main(after: ANIMATION_DURATION * 2) { [weak self] in
+            self?.searchBar.becomeFirstResponder()
+        }
+        
     }
     
     //MARK: - Bind
@@ -85,38 +92,42 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
         // action
         // searchBar에 텍스트 변경 옵션이 일어날 경우
         self.searchBar.rx.text
-            .asDriver()
+            .map{ $0?.trimSide }
+            .asDriver(onErrorJustReturn: "")
             .debounce(RxTimeInterval.milliseconds(500))
             .distinctUntilChanged()
             .map{ Reactor.Action.inputUserName(userName: $0 ?? "") }
             .drive(reactor.action)
             .disposed(by: disposeBag)
         
-        
         //state
-        reactor.state.map{ $0.noDataText }
-            .distinctUntilChanged()
-            .observeOn(Schedulers.main)
-            .subscribe(onNext: { [weak self] in
-                self?.vNoData.isHidden = $0.isEmpty
-                self?.lbNoData.text = $0
-            })
-            .disposed(by: disposeBag)
-        
+        // TableView
         reactor.state
             .map{ $0.userList }
             .bind(to: self.tvUserList.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
         
+        // 데이터가 없거나 SearchBar 검색어가 비어있는 경우
+        reactor.state.map{ $0.noDataText }
+            .distinctUntilChanged()
+            .observeOn(Schedulers.main)
+            .subscribe(onNext: { [weak self] in
+                self?.vNoData.rx.animated.fade(duration: ANIMATION_DURATION).isHidden.onNext($0.isEmpty)
+                self?.lbNoData.rx.animated.fade(duration: ANIMATION_DURATION).text.onNext($0)
+            })
+            .disposed(by: disposeBag)
+        
+        // 재검색 시, 스크롤 상단으로 올리기
         reactor.isSearchReload
             .filter{ $0 == true }
-            .filter{ _ in !reactor.isEmptyUserList() }
+            .filter{ _ in !reactor.isEmptyCurrentUserList() }
             .observeOn(Schedulers.main)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 self.tvUserList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             }).disposed(by: disposeBag)
         
+        // 로딩바 관리
         reactor.isLoading
             .distinctUntilChanged()
             .observeOn(Schedulers.main)
@@ -134,6 +145,7 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
             }).disposed(by: disposeBag)
         
         // e.g.
+        // 마지막 Section의 마지막 Row가 보여질 경우 다음 페이지 데이터 불러오기
         self.tvUserList.rx.willDisplayCell
             .filter{ _ in reactor.chkEnablePaging() }
             .subscribe(onNext: { [weak self] cell, indexPath in
@@ -156,6 +168,14 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
         self.constraints()
     }
     
+    /**
+     # constraints
+     - Author: Mephrine
+     - Date: 20.06.22
+     - Parameters:
+     - Returns:
+     - Note: 오토레이아웃 적용
+    */
     func constraints() {
         self.searchBar.snp.makeConstraints { [weak self] in
             guard let self = self else { return }
@@ -176,7 +196,7 @@ final class MainVC: BaseVC, StoryboardView, StoryboardBased {
         self.lbNoData.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.centerY.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-40)
         }
         
         self.vNoData.snp.makeConstraints { [weak self] in

@@ -9,19 +9,20 @@
 import Foundation
 import ReactorKit
 
+
+/**
+# (E) APIError
+- Author: Mephrine
+- Date: 20.06.22
+- Note: API Error 모음
+*/
 enum APIError: Error {
-    case errorURL
     case noData
-    case network
     
     var desc: String? {
         switch self {
-        case .errorURL:
-            return "Error : Incorrect URL"
         case .noData:
             return "Error : NoData"
-        case .network:
-            return "Error : Network"
         }
     }
 }
@@ -35,12 +36,13 @@ enum APIError: Error {
 final class MainVM: BaseVM, Reactor {
     var initialState = State()
     
+    // Service
     typealias Services = HasMainService
     var services: Services
     
     // e.g.
-    var isLoading = BehaviorSubject<Bool>(value: false)
-    var isSearchReload = BehaviorSubject<Bool>(value: false)
+    var isLoading = PublishSubject<Bool>()         // 로딩바 관리
+    var isSearchReload = PublishSubject<Bool>()    // 검색어 변경으로 인한 리로드
     
     init(withService service: AppServices) {
         self.services = service
@@ -113,18 +115,10 @@ final class MainVM: BaseVM, Reactor {
                 .map { $0.items }
                 .asObservable()
                 .filterNil()
-//                .observeOn(Schedulers.default)
-//                .flatMap{
-//                    Observable.combineLatest($0.map { [unowned self] item in
-//                        self.services.mainService.rx
-//                            .userInfo(userName: item.login!)
-//                            .asObservable()
-//                    })
-//            }
-            .catchErrorJustReturn([])
-            .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)} }
-            .map{ [MainTableViewSection(items: $0)] }
-            .map{ Mutation.searchUser(userList: $0) }
+                .catchErrorJustReturn([])
+                .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)} }
+                .map{ [MainTableViewSection(items: $0)] }
+                .map{ Mutation.searchUser(userList: $0) }
             
             return .concat(nameObservable, requestObservable, pageCntObservable)
         case .loadMore:
@@ -134,18 +128,11 @@ final class MainVM: BaseVM, Reactor {
                             .asObservable()
                             .filterNil()
                             .observeOn(Schedulers.default)
-            //                .flatMap{
-            //                    Observable.combineLatest($0.map { [unowned self] item in
-            //                        self.services.mainService.rx
-            //                            .userInfo(userName: item.login!)
-            //                            .asObservable()
-            //                    })
-            //            }
-                        .catchErrorJustReturn([])
-                            .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)}
-                        }
-                        .map{ [MainTableViewSection(items: $0)] }
-                        .map{ Mutation.addUserList(userList: $0) }
+                            .catchErrorJustReturn([])
+                                .map{ $0.map { [weak self] in UserCellModel(model: $0, service: self?.services as! AppServices)}
+                            }
+                            .map{ [MainTableViewSection(items: $0)] }
+                            .map{ Mutation.addUserList(userList: $0) }
         }
         
     }
@@ -165,7 +152,7 @@ final class MainVM: BaseVM, Reactor {
         case .searchUser(let userList):
             newState.page = 2
             newState.userList = userList
-            if isEmptyUserList() {
+            if userList.isEmpty || (userList.first?.items.isEmpty ?? true) {
                 newState.noDataText = STR_SEARCH_NO_DATA
             } else {
                 newState.noDataText = ""
@@ -176,6 +163,7 @@ final class MainVM: BaseVM, Reactor {
             newState.searchUserName = text
             if text.isEmpty {
                 newState.noDataText = STR_SEARCH_NO_INPUT
+                newState.userList = []
             } else {
                 newState.noDataText = ""
             }
@@ -191,6 +179,14 @@ final class MainVM: BaseVM, Reactor {
     }
     
     //MARK: -e.g.
+    /**
+     # chkEnablePaging
+     - Author: Mephrine
+     - Date: 20.06.27
+     - Parameters:
+     - Returns: Bool
+     - Note: 페이징이 가능한 지에 대한 여부 반환
+    */
     func chkEnablePaging() -> Bool {
         if (currentState.page - 1) * PAGE_COUNT < currentState.totalPage {
             return true
@@ -198,7 +194,15 @@ final class MainVM: BaseVM, Reactor {
         return false
     }
     
-    func isEmptyUserList() -> Bool {
+    /**
+     # isEmptyCurrentUserList
+     - Author: Mephrine
+     - Date: 20.06.27
+     - Parameters:
+     - Returns: Bool
+     - Note: 현재 UserList가 비어있는 지에 대해 반환
+    */
+    func isEmptyCurrentUserList() -> Bool {
         if currentState.userList.isEmpty || (currentState.userList.first?.items.isEmpty ?? true) {
             return true
         }

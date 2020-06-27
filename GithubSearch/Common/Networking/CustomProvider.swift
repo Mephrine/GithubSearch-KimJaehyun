@@ -71,7 +71,7 @@ extension Reactive where Base: CustomProvider<CallAPI> {
             return Disposables.create {
                 cancellableToken?.cancel()
             }
-        }.timeout(.seconds(30), scheduler: Schedulers.async)
+        }.timeout(.seconds(SESSION_OUT_TIME), scheduler: Schedulers.async)
     }
 }
 

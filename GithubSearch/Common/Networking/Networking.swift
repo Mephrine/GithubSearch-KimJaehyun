@@ -65,10 +65,6 @@ final class Networking<Target: TargetType>: CustomProvider<Target> {
                     log.d(message)
             }
         )
-        
-//            .map {
-//            completeNetwork()
-//        }
     }
 }
 

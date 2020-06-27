@@ -39,7 +39,6 @@
 		035AA2E024A07652001A88C9 /* MainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2DF24A07652001A88C9 /* MainService.swift */; };
 		035AA2E324A076EB001A88C9 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2E224A076EB001A88C9 /* UserInfo.swift */; };
 		035AA2E524A07A8D001A88C9 /* AppFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2E424A07A8D001A88C9 /* AppFlow.swift */; };
-		035AA2E724A0A097001A88C9 /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2E624A0A097001A88C9 /* CommonAlert.swift */; };
 		035AA2EB24A0A0CD001A88C9 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2E924A0A0CD001A88C9 /* Async.swift */; };
 		035AA2EC24A0A0CD001A88C9 /* Schedulers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2EA24A0A0CD001A88C9 /* Schedulers.swift */; };
 		035AA2EE24A0A13B001A88C9 /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035AA2ED24A0A13B001A88C9 /* UIApplication+Ext.swift */; };
@@ -105,7 +104,6 @@
 		035AA2DF24A07652001A88C9 /* MainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainService.swift; sourceTree = "<group>"; };
 		035AA2E224A076EB001A88C9 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		035AA2E424A07A8D001A88C9 /* AppFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlow.swift; sourceTree = "<group>"; };
-		035AA2E624A0A097001A88C9 /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		035AA2E924A0A0CD001A88C9 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
 		035AA2EA24A0A0CD001A88C9 /* Schedulers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedulers.swift; sourceTree = "<group>"; };
 		035AA2ED24A0A13B001A88C9 /* UIApplication+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Ext.swift"; sourceTree = "<group>"; };
@@ -245,7 +243,6 @@
 				035AA2E824A0A0CD001A88C9 /* Schedulers */,
 				035AA2A524A06D99001A88C9 /* Utils.swift */,
 				035AA2DB24A075B7001A88C9 /* Logger.swift */,
-				035AA2E624A0A097001A88C9 /* CommonAlert.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -635,7 +632,6 @@
 				035AA2C824A07008001A88C9 /* String+Ext.swift in Sources */,
 				035AA2D924A07510001A88C9 /* PrimitiveSequence+SwiftyJSONMapper.swift in Sources */,
 				035AA27824A066C6001A88C9 /* AppDelegate.swift in Sources */,
-				035AA2E724A0A097001A88C9 /* CommonAlert.swift in Sources */,
 				035AA2D424A07510001A88C9 /* Observable+Response.swift in Sources */,
 				035AA2BF24A06EB0001A88C9 /* StringDefinition.swift in Sources */,
 				035AA2C624A06FC7001A88C9 /* UIColor+Ext.swift in Sources */,

@@ -13,6 +13,18 @@ extension String {
         return index(start ?? startIndex, offsetBy: offset, limitedBy: endIndex)
     }
     
+    var trimTrailingWhitespace: String {
+        if let trailingWs = self.range(of: "\\s+$", options: .regularExpression) {
+            return self.replacingCharacters(in: trailingWs, with: "")
+        } else {
+            return self
+        }
+    }
+    
+    var trimSide: String {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     
     //MARK: - SubScript
     subscript(_ range: CountableRange<Int>) -> Substring {

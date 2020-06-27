@@ -9,6 +9,12 @@
 import Foundation
 import RxSwift
 
+/**
+# (C) UserCellModel
+- Author: Mephrine
+- Date: 20.06.23
+- Note: 유저 정보를 보여주는 Cell의 Model
+*/
 class UserCellModel {
     let model: SearchUserItem
     let disposeBag = DisposeBag()
